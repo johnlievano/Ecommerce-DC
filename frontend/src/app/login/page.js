@@ -5,36 +5,31 @@ import { useCart } from '../../context/CartContext'
 import Link from 'next/link'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
-// Componente de Onda Decorativa
-const WaveDivider = ({ color = "fill-white", position = "bottom", flip = false }) => (
-  <div className={`absolute left-0 w-full overflow-hidden leading-[0] z-10 ${position === 'top' ? '-top-1 rotate-180' : '-bottom-1'}`}>
-    <svg
-      className={`relative block w-[calc(100%+1.3px)] h-[60px] md:h-[100px] ${flip ? 'scale-x-[-1]' : ''}`}
-      data-name="Layer 1"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1200 120"
-      preserveAspectRatio="none"
-    >
-      <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className={color}></path>
-    </svg>
-  </div>
-)
+// 1. IMPORTAR ICONOS (Lucide React)
+import { 
+  ShoppingCart, User, MapPin, Clock, Phone, Mail, 
+  Facebook, Instagram, Youtube, Quote, Menu, X, LogIn, LogOut,
+  Lock, AlertCircle, CheckCircle, ArrowRight
+} from 'lucide-react'
+
+// (Eliminado WaveDivider para consistencia visual)
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const { login } = useAuth()
+  const { login, user, logout } = useAuth() // Agregué user y logout aquí para el header
   const { getCartItemsCount } = useCart()
 
-  const handleSubmit = async (e) => { //funcion de cuando el usuario hace click en ingresar
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const result = await login(email, password) //Es la que envía el email y password a Django. 
+    const result = await login(email, password)
     
     if (result.success) {
       window.location.href = '/'
@@ -48,55 +43,84 @@ export default function Login() {
   if (loading) return <LoadingSpinner text="Iniciando sesión..." />
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
 
-      {/* --- HEADER FLOTANTE --- */}
+      {/* --- HEADER (Reutilizado) --- */}
       <header className="fixed top-2 md:top-4 left-0 right-0 z-50 px-2 md:px-4">
-        <div className="container mx-auto bg-[#009045] text-white rounded-full shadow-2xl py-3 px-4 md:px-8 flex justify-between items-center border-b-[4px] border-[#007a3a]">
-
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="bg-white text-[#009045] p-2 rounded-full font-black text-xl border-2 border-yellow-400 group-hover:rotate-12 transition-transform">
-              DC
-            </div>
-            <div className="leading-tight hidden sm:block">
-              <h1 className="text-xl font-black tracking-wide">DELICIAS</h1>
-            </div>
-          </Link>
-
-          <nav className="hidden lg:flex gap-8 font-black text-lg tracking-wide">
-            {['Inicio', 'Productos', 'Nosotros', 'Contacto'].map((item) => (
-              <Link
-                key={item}
-                href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`}
-                className="hover:text-yellow-300 transition-all duration-300 relative group py-2"
-              >
-                {item.toUpperCase()}
-                <span className="absolute bottom-0 left-0 w-0 h-1 bg-yellow-400 rounded-full group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4 md:gap-6 shrink-0">
-            <Link href="/registro" className="hidden md:block bg-yellow-400 text-[#009045] px-5 py-2 rounded-full font-black hover:bg-white hover:scale-105 shadow-md transition-all">
-              Regístrate
-            </Link>
-            <Link href="/carrito" className="relative group hover:scale-110 transition-transform">
-              <div className="bg-[#007a3a] p-2 md:px-4 md:py-2 rounded-full font-bold hover:bg-yellow-400 hover:text-[#009045] transition-all flex items-center gap-2">
-                <span>🛒</span>
-                {getCartItemsCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
-                    {getCartItemsCount()}
-                  </span>
-                )}
+        <div className="container mx-auto bg-[#009045] text-white rounded-2xl md:rounded-full shadow-2xl py-3 px-4 md:px-8 flex flex-wrap justify-between items-center border-b-[4px] border-[#007a3a] relative">
+            
+            <Link href="/" className="flex items-center gap-2 group shrink-0">
+              <div className="bg-white p-0 rounded-full border-2 border-yellow-400 group-hover:rotate-12 transition-transform shadow-md w-12 h-12 overflow-hidden">
+                <img src="/icons/DC.png" alt="Logo" className="w-full h-full object-cover" />
+              </div>
+              <div className="leading-tight hidden sm:block">
+                <h1 className="text-xl font-black tracking-wide">DELICIAS</h1>
+                <p className="text-xs text-yellow-300 font-bold">COLOMBIANAS</p>
               </div>
             </Link>
+
+            <nav className="hidden lg:flex gap-8 font-black text-lg tracking-wide">
+              {['Inicio', 'Productos', 'Nosotros', 'Contacto'].map((item) => (
+                <Link key={item} href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`} className="hover:text-yellow-300 transition-all duration-300 relative group py-2">
+                  {item.toUpperCase()}
+                  <span className="absolute bottom-0 left-0 w-0 h-1 bg-yellow-400 rounded-full group-hover:w-full transition-all duration-300"></span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-4 md:gap-6 shrink-0">
+              {!user ? (
+                <div className="hidden md:flex items-center gap-4 font-bold text-base">
+                  <Link href="/registro" className="bg-yellow-400 text-[#009045] px-5 py-2 rounded-full font-black hover:bg-white hover:scale-105 shadow-md transition-all">Regístrate</Link>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center gap-3 font-bold text-sm">
+                  <div className="flex items-center gap-1 bg-[#007a3a] px-3 py-1 rounded-full"><User size={16} className="text-yellow-300"/><span className="truncate max-w-[100px]">{user.nombre}</span></div>
+                  <button onClick={logout} className="hover:text-red-300 transition-colors"><LogOut size={18}/></button>
+                </div>
+              )}
+              
+              <Link href="/carrito" className="relative group hover:scale-110 transition-transform">
+                <div className="bg-[#007a3a] p-2 md:px-4 md:py-2 rounded-full font-bold hover:bg-yellow-400 hover:text-[#009045] transition-all flex items-center gap-2">
+                  <ShoppingCart size={20} />
+                  {getCartItemsCount() > 0 && <span className="absolute -top-1 -right-1 md:-top-2 md:-right-2 bg-red-600 text-white text-xs font-black w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full border-2 border-white">{getCartItemsCount()}</span>}
+                </div>
+              </Link>
+
+              {/* Botón Móvil */}
+              <button className="lg:hidden text-white p-2 hover:text-yellow-300 transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+
+            {/* Menú Móvil */}
+            {mobileMenuOpen && (
+              <div className="absolute top-full left-0 w-full mt-2 bg-[#009045] rounded-2xl shadow-xl border-t-4 border-yellow-400 overflow-hidden lg:hidden z-50 animate-fade-in">
+                <div className="flex flex-col p-4 space-y-2">
+                  {['Inicio', 'Productos', 'Nosotros', 'Contacto'].map((item) => (
+                    <Link key={item} href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`} className="block py-3 px-4 rounded-xl hover:bg-[#007a3a] font-black text-lg text-white transition-colors border-b border-[#007a3a] last:border-0" onClick={() => setMobileMenuOpen(false)}>
+                      {item.toUpperCase()}
+                    </Link>
+                  ))}
+                  {!user ? (
+                    <div className="flex flex-col gap-2 pt-2 mt-2 border-t border-[#007a3a]">
+                        <Link href="/registro" className="py-2 px-4 bg-yellow-400 text-[#009045] rounded-xl font-black text-center">Regístrate</Link>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#007a3a] px-4">
+                        <div className="flex items-center gap-2 font-bold text-white"><User size={18} className="text-yellow-300"/> {user.nombre}</div>
+                        <button onClick={logout} className="text-red-300 font-bold text-sm">Salir</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
       </header>
 
-      {/* --- HERO BACKGROUND --- */}
-      <div className="bg-[#009045] pt-48 pb-24 relative">
-        <div className="container mx-auto px-4 text-center relative z-10">
+      {/* --- HERO BACKGROUND (Sin olas, borde curvo) --- */}
+      <div className="bg-[#009045] pt-40 pb-32 relative text-center rounded-br-[4rem] md:rounded-br-[8rem] shadow-xl overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-md">
             ¡Hola de Nuevo!
           </h1>
@@ -104,13 +128,12 @@ export default function Login() {
             Ingresa a tu cuenta para continuar disfrutando.
           </p>
         </div>
-        {/* Emojis decorativos flotantes */}
-        <div className="absolute top-32 left-10 text-6xl animate-bounce hidden lg:block opacity-80">🔐</div>
-        <div className="absolute top-48 right-20 text-6xl animate-pulse hidden lg:block opacity-80">🔑</div>
-        <WaveDivider color="fill-gray-50" />
+        {/* Decoración sutil */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl translate-y-10 -translate-x-10"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl translate-y-10 translate-x-10"></div>
       </div>
 
-      <main className="container mx-auto px-4 py-8 -mt-16 relative z-20">
+      <main className="container mx-auto px-4 py-8 -mt-24 relative z-20 flex-1">
         <div className="max-w-md mx-auto animate-slide-up">
 
           {/* TARJETA DE LOGIN */}
@@ -120,68 +143,72 @@ export default function Login() {
             <div className="absolute top-0 left-0 w-full h-2 bg-yellow-400"></div>
 
             <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-[#009045] text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-3xl border-4 border-yellow-400">
-                👋
+              <div className="w-20 h-20 bg-[#009045] text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border-4 border-white">
+                <LogIn size={32} strokeWidth={2.5} />
               </div>
               <h2 className="text-3xl font-black text-gray-800">Iniciar Sesión</h2>
             </div>
 
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-xl mb-6 animate-shake font-medium text-sm">
-                <div className="flex items-center gap-2">
-                  <span>⚠️</span>
-                  <span>{error}</span>
-                </div>
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-xl mb-6 animate-shake font-medium text-sm flex items-center gap-3">
+                <AlertCircle size={20} />
+                <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2 ml-2">Correo Electrónico</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-5 py-3 focus:border-[#009045] focus:ring-0 focus:bg-white transition-all outline-none font-medium"
-                  placeholder="tu@email.com"
-                  required
-                />
+                <div className="relative">
+                  <Mail className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl py-3 pl-12 pr-4 focus:border-[#009045] focus:ring-0 focus:bg-white transition-all outline-none font-medium text-gray-700"
+                    placeholder="tu@email.com"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2 ml-2">Contraseña</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-5 py-3 focus:border-[#009045] focus:ring-0 focus:bg-white transition-all outline-none font-medium"
-                  placeholder="Tu contraseña"
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl py-3 pl-12 pr-4 focus:border-[#009045] focus:ring-0 focus:bg-white transition-all outline-none font-medium text-gray-700"
+                    placeholder="Tu contraseña"
+                    required
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#009045] hover:bg-[#007a3a] text-white py-4 rounded-full font-black text-lg tracking-wide transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[#009045] hover:bg-[#007a3a] text-white py-4 rounded-full font-black text-lg tracking-wide transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? 'ENTRANDO...' : 'INGRESAR'}
+                {loading ? 'ENTRANDO...' : ( <>INGRESAR <ArrowRight size={20} /></> )}
               </button>
             </form>
 
             <div className="text-center mt-8 pt-6 border-t border-gray-100">
               <p className="text-gray-600 font-medium mb-4">
                 ¿No tienes cuenta?{' '}
-                <Link href="/registro" className="text-[#009045] font-black hover:text-yellow-500 transition-colors underline decoration-2">
+                <Link href="/registro" className="text-[#009045] font-black hover:text-yellow-500 transition-colors underline decoration-2 underline-offset-2">
                   Regístrate gratis
                 </Link>
               </p>
             </div>
 
-            {/* Datos de prueba estilo nota adhesiva */}
-            <div className="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200 transform rotate-1 hover:rotate-0 transition-transform duration-300">
-              <p className="text-xs text-yellow-800 text-center font-medium">
-                <strong>💡 Tip:</strong> Usa cualquier email para probar.
+            {/* Tip (Sin estilo nota adhesiva, más limpio) */}
+            <div className="mt-4 p-3 bg-green-50 rounded-xl text-center border border-green-100">
+              <p className="text-xs text-[#009045] font-bold flex items-center justify-center gap-2">
+                <CheckCircle size={14} /> Tip: Puedes usar cualquier email para probar.
               </p>
             </div>
 
@@ -189,35 +216,50 @@ export default function Login() {
         </div>
       </main>
 
-      {/* --- FOOTER COMPLETO --- */}
-      <footer className="bg-[#009045] text-white pt-16 relative overflow-hidden border-t-8 border-yellow-400 mt-20">
-        <div className="container mx-auto px-4 pb-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+      {/* --- FOOTER COMPLETO (Ajustado) --- */}
+      <footer className="bg-[#009045] text-white pt-12 mt-20 font-sans border-t-[8px] border-yellow-400">
+        <div className="container mx-auto px-4 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            
             <div className="lg:col-span-1 flex justify-center lg:justify-start">
-              <div className="text-[100px] leading-none drop-shadow-xl cursor-pointer hover:scale-110 transition-transform">
-                🏪
-              </div>
+              <img src="/icons/shop_footer.png" alt="Tienda Delicias Colombianas" className="w-full h-full object-contain max-w-[200px] drop-shadow-xl transform hover:scale-110 transition-transform cursor-pointer" />
             </div>
+
             <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><span className="text-2xl">📍</span> Fábrica</h3>
-              <div className="space-y-2 font-medium text-green-50"><p>Carrera 68 D Nº 98-23</p><p>Bogotá - Colombia</p></div>
+              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><MapPin size={20} /> Fábrica</h3>
+              <div className="text-sm font-medium text-green-50 space-y-1"><p>Carrera 68 D Nº 98-23</p><p>Bogotá - Colombia</p></div>
             </div>
+
             <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><span className="text-2xl">🕒</span> Horarios</h3>
-              <div className="space-y-4 font-medium text-green-50"><p>Lunes a Viernes: 8am - 5pm</p></div>
+              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Clock size={20} /> Horarios</h3>
+              <div className="text-sm font-medium text-green-50"><p>Lunes a Viernes: 8am - 5pm</p></div>
             </div>
+
             <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><span className="text-2xl">✉️</span> Contacto</h3>
-              <div className="space-y-4 font-medium text-green-50"><p className="font-bold text-yellow-300 text-lg">018000 514020</p></div>
+              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Phone size={20} /> Contacto</h3>
+              <div className="text-sm font-medium text-green-50"><p className="font-bold text-white text-base">018000 514020</p></div>
             </div>
+
             <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><span className="text-2xl">💼</span> Equipo</h3>
-              <div className="font-medium text-green-50"><a href="#" className="underline hover:text-yellow-300">Trabaja con nosotros</a></div>
+              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Mail size={20} /> Empleo</h3>
+              <div className="text-sm font-medium text-green-50"><a href="#" className="underline hover:text-white">Enviar hoja de vida</a></div>
             </div>
+
           </div>
         </div>
-        <div className="bg-[#006831] py-6 text-center text-sm font-bold text-green-100">
-          © 2025 Delicias Colombianas | Hecho con ❤️ y Sabor
+
+        {/* Barra inferior más compacta */}
+        <div className="bg-[#007a3a] py-6 relative z-20 shadow-inner">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+             <div className="flex gap-4">
+                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Facebook size={18} /></a>
+                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Instagram size={18} /></a>
+                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Youtube size={18} /></a>
+             </div>
+             <div className="text-xs font-bold text-green-100 flex items-center gap-1">
+               <Quote size={10} /> Calidad y Tradición <Quote size={10} /> © 2025
+             </div>
+          </div>
         </div>
       </footer>
     </div>

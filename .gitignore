@@ -3,3 +3,20 @@ node_modules/
 .env
 .next/
 dist/
+
+# NEXTJS
+frontend/.next/
+frontend/node_modules/
+
+# DJANGO
+backend/db.sqlite3
+backend/__pycache__/
+backend/media/
+
+# ENV FILES
+*.env
+.env
+
+# SYSTEM FILES
+.DS_Store
+Thumbs.db
