@@ -29,22 +29,48 @@ class Producto(models.Model):
 
 
 # ---------------------------
-#   BANNER (Nuevo)
+#   BANNER (Corregido con Choices)
 # ---------------------------
+
+# 🎨 Opciones de Color de Fondo (¡Asegúrate de que estas clases estén en tu safelist de Tailwind!)
+COLOR_FONDO_OPCIONES = [
+    ('bg-green-600', 'Verde (Principal)'),
+    ('bg-amber-600', 'Ámbar (Empanada)'),
+    ('bg-red-600', 'Rojo (Oferta)'),
+    ('bg-blue-600', 'Azul (Novedad)'),
+    ('bg-gray-100', 'Gris Claro (Neutro)'),
+]
+
+# 📝 Opciones de Color de Texto (¡Asegúrate de que estas clases estén en tu safelist de Tailwind!)
+COLOR_TEXTO_OPCIONES = [
+    ('text-white', 'Blanco'),
+    ('text-gray-800', 'Gris Oscuro'),
+    ('text-green-900', 'Verde Oscuro'),
+]
+
 class Banner(models.Model):
     titulo = models.CharField(max_length=100)
     subtitulo = models.CharField(max_length=200)
-    tag = models.CharField(max_length=50, default="NUEVO")  # Ej: OFERTA, NUEVO
+    tag = models.CharField(max_length=50, default="NUEVO")
 
     imagen = models.ImageField(upload_to="banners/")
 
-    # Se guardan clases Tailwind o HEX para personalización
+    # CORRECCIÓN: Usamos choices para un control seguro de clases de Tailwind
     color_fondo = models.CharField(
         max_length=50,
+        choices=COLOR_FONDO_OPCIONES, # Menú desplegable en el Admin
         default="bg-green-600",
-        help_text="Clase de Tailwind ej: bg-red-500 o un código Hex",
+        help_text="Clase de Tailwind. SOLO se permiten las clases de la lista.",
+        verbose_name="Color de Fondo"
     )
-    color_texto = models.CharField(max_length=50, default="text-white")
+    
+    # CORRECCIÓN: Usamos choices también para el texto
+    color_texto = models.CharField(
+        max_length=50,
+        choices=COLOR_TEXTO_OPCIONES,
+        default="text-white",
+        verbose_name="Color de Texto"
+    )
 
     texto_boton = models.CharField(max_length=50, default="VER MÁS")
     enlace = models.CharField(max_length=200, default="/productos")

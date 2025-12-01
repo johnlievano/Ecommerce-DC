@@ -19,7 +19,7 @@ import {
 
 export default function Nosotros() {
   const [loading, setLoading] = useState(true)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false) 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const { getCartItemsCount } = useCart()
   const { user, logout } = useAuth()
@@ -165,47 +165,47 @@ export default function Nosotros() {
 
         {/* --- NUEVA SECCIÓN: HISTORIA / LÍNEA DE TIEMPO MODERNA --- */}
         <section className="mb-28 relative">
-            <div className="text-center mb-16">
-                <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase">Nuestra Trayectoria</span>
-                <h2 className="text-4xl md:text-5xl font-black text-[#009045] mt-2">Pasos de Gigante</h2>
+          <div className="text-center mb-16">
+            <span className="text-yellow-500 font-bold tracking-widest text-sm uppercase">Nuestra Trayectoria</span>
+            <h2 className="text-4xl md:text-5xl font-black text-[#009045] mt-2">Pasos de Gigante</h2>
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 relative">
+            {/* LÍNEA CENTRAL CON DEGRADADO (Izquierda en móvil, Centro en desktop) */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-400 via-[#009045] to-yellow-400 rounded-full transform md:-translate-x-1/2"></div>
+
+            <div className="space-y-12">
+              {hitos.map((hito, index) => (
+                <ScrollReveal key={index} className="relative z-10">
+                  {/* CONTENEDOR FLEX: Alterna dirección en Desktop */}
+                  <div className={`flex flex-col md:flex-row items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
+
+                    {/* 1. Tarjeta de Contenido */}
+                    <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-12 mb-4 md:mb-0">
+                      <div className={`bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border-b-[6px] border-yellow-400 relative group hover:-translate-y-1 transition-transform duration-300 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'} text-left`}>
+
+                        {/* Badge del Año dentro de la tarjeta */}
+                        <span className={`inline-block bg-[#009045] text-white font-black px-4 py-1 rounded-full text-sm mb-3 shadow-md ${index % 2 === 0 ? 'md:mr-auto' : ''}`}>
+                          {hito.año}
+                        </span>
+
+                        <h4 className="text-2xl font-black text-gray-800 mb-2">{hito.evento}</h4>
+                        <p className="text-gray-600 font-medium leading-relaxed">{hito.detalle}</p>
+                      </div>
+                    </div>
+
+                    {/* 2. Icono Marcador Central */}
+                    <div className="absolute left-8 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-12 h-12 bg-white border-[4px] border-[#009045] rounded-full shadow-lg z-20 text-[#009045] group-hover:scale-110 transition-transform">
+                      {hito.icon}
+                    </div>
+
+                    {/* 3. Espacio Vacío (Para equilibrio en desktop) */}
+                    <div className="hidden md:block w-1/2"></div>
+                  </div>
+                </ScrollReveal>
+              ))}
             </div>
-
-            <div className="max-w-5xl mx-auto px-4 relative">
-                {/* LÍNEA CENTRAL CON DEGRADADO (Izquierda en móvil, Centro en desktop) */}
-                <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-400 via-[#009045] to-yellow-400 rounded-full transform md:-translate-x-1/2"></div>
-
-                <div className="space-y-12">
-                    {hitos.map((hito, index) => (
-                        <ScrollReveal key={index} className="relative z-10">
-                            {/* CONTENEDOR FLEX: Alterna dirección en Desktop */}
-                            <div className={`flex flex-col md:flex-row items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-                                
-                                {/* 1. Tarjeta de Contenido */}
-                                <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-12 mb-4 md:mb-0">
-                                    <div className={`bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border-b-[6px] border-yellow-400 relative group hover:-translate-y-1 transition-transform duration-300 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'} text-left`}>
-                                        
-                                        {/* Badge del Año dentro de la tarjeta */}
-                                        <span className={`inline-block bg-[#009045] text-white font-black px-4 py-1 rounded-full text-sm mb-3 shadow-md ${index % 2 === 0 ? 'md:mr-auto' : ''}`}>
-                                            {hito.año}
-                                        </span>
-                                        
-                                        <h4 className="text-2xl font-black text-gray-800 mb-2">{hito.evento}</h4>
-                                        <p className="text-gray-600 font-medium leading-relaxed">{hito.detalle}</p>
-                                    </div>
-                                </div>
-
-                                {/* 2. Icono Marcador Central */}
-                                <div className="absolute left-8 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-12 h-12 bg-white border-[4px] border-[#009045] rounded-full shadow-lg z-20 text-[#009045] group-hover:scale-110 transition-transform">
-                                    {hito.icon}
-                                </div>
-
-                                {/* 3. Espacio Vacío (Para equilibrio en desktop) */}
-                                <div className="hidden md:block w-1/2"></div>
-                            </div>
-                        </ScrollReveal>
-                    ))}
-                </div>
-            </div>
+          </div>
         </section>
 
         {/* --- EQUIPO --- */}
@@ -256,12 +256,11 @@ export default function Nosotros() {
             <div>
               <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Nosotros</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Quiénes somos</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Nuestra Historia</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Sostenibilidad</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Noticias</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</a></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Quiénes somos</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Nuestra Historia</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Sostenibilidad</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</Link></li>
               </ul>
             </div>
 

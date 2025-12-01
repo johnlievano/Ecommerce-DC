@@ -17,7 +17,7 @@ export default function Contacto() {
   const [formData, setFormData] = useState({ nombre: '', email: '', telefono: '', mensaje: '' })
   const [showSuccessModal, setShowSuccessModal] = useState(false) // 2. ESTADO PARA EL MODAL
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+
   const router = useRouter() // HOOK DE NAVEGACIÓN
   const { user, logout } = useAuth()
   const { getCartItemsCount } = useCart()
@@ -28,14 +28,14 @@ export default function Contacto() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     // 3. MOSTRAR MODAL Y REDIRIGIR
     setShowSuccessModal(true)
-    
+
     // Esperar 3 segundos y redirigir al inicio
     setTimeout(() => {
       setShowSuccessModal(false)
-      router.push('/') 
+      router.push('/')
     }, 5000)
   }
 
@@ -51,11 +51,11 @@ export default function Contacto() {
             </div>
             <h2 className="text-3xl font-black text-gray-800 mb-2">¡Mensaje Enviado!</h2>
             <p className="text-gray-500 font-medium text-lg mb-6">
-              Gracias por escribirnos, {formData.nombre.split(' ')[0]}.<br/>
+              Gracias por escribirnos, {formData.nombre.split(' ')[0]}.<br />
               Te responderemos muy pronto.
             </p>
             <div className="flex items-center justify-center gap-2 text-sm font-bold text-[#009045] animate-pulse">
-               Redirigiendo al inicio...
+              Redirigiendo al inicio...
             </div>
           </div>
         </div>
@@ -225,12 +225,11 @@ export default function Contacto() {
             <div>
               <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Nosotros</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Quiénes somos</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Nuestra Historia</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Sostenibilidad</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Noticias</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</a></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Quiénes somos</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Nuestra Historia</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Sostenibilidad</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</Link></li>
               </ul>
             </div>
 

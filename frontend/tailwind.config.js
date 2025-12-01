@@ -6,20 +6,23 @@ module.exports = {
   ],
 
   // 🖼️ AÑADIDO: Lista Segura (Safelisting) para clases dinámicas.
-  // Esto incluye las clases de color que vienen de la base de datos de Django
-  // para que Tailwind no las elimine durante la compilación.
+  // Esto incluye TODAS las clases de color que vienen de las CHOICES del modelo Banner
+  // para que Tailwind NO las elimine durante la compilación.
   safelist: [
-    // Clases de fondo que puedes usar en los banners (puedes añadir más si usas más colores)
+    // Clases de fondo definidas en Django Choices:
     'bg-green-600',
     'bg-red-600',
-    'bg-purple-600',
+    'bg-purple-600', // (Mantengo este si es una opción anterior)
     'bg-blue-600',
-    'bg-pink-600',
-    'bg-yellow-600',
+    'bg-pink-600', // (Mantengo este si es una opción anterior)
+    'bg-yellow-600', // (Mantengo este si es una opción anterior)
     'bg-amber-600',
-    // La clase de texto que estás usando en el banner
+    'bg-gray-100', // <-- ¡Añadido: Opción Neutra!
+
+    // Clases de texto definidas en Django Choices:
     'text-white',
     'text-gray-800',
+    'text-green-900', // <-- ¡Añadido: Opción de Texto Oscuro!
   ],
 
   theme: {

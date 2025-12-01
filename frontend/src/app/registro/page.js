@@ -317,12 +317,11 @@ export default function Registro() {
             <div>
               <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Nosotros</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Quiénes somos</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Nuestra Historia</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Sostenibilidad</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Noticias</a></li>
-                <li><a href="#" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</a></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Quiénes somos</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Nuestra Historia</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</Link></li>
+                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Sostenibilidad</Link></li>
+                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</Link></li>
               </ul>
             </div>
 
