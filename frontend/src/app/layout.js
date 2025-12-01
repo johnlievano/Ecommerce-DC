@@ -1,21 +1,21 @@
-﻿import { AuthProvider } from '../context/AuthContext'
-import { CartProvider } from '../context/CartContext'
-import './globals.css'
+﻿// src/app/layout.js
 
-export const metadata = {
-  title: 'Delicias Colombianas - Sabores Auténticos de Colombia',
-  description: 'Productos tradicionales colombianos elaborados con recetas ancestrales. Chicharrón, queso campesino, empanadas y más.',
+import './globals.css'
+import { ClientWrapper } from './ClientWrapper' // ⬅️ Ahora sí encontrará este archivo
+
+export const metadata = { 
+  title: 'Delicias Colombianas',
+  description: 'Sabores auténticos de Colombia.',
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body className="antialiased">
-        <AuthProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AuthProvider>
+        {/* Usamos el Wrapper que acabamos de crear */}
+        <ClientWrapper>
+          {children}
+        </ClientWrapper>
       </body>
     </html>
   )

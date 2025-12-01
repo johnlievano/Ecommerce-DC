@@ -4,6 +4,7 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
+from django.http import JsonResponse
 
 from .models import Categoria, Producto, Banner
 from .serializers import (
@@ -72,3 +73,15 @@ class BannerListView(generics.ListAPIView):
     queryset = Banner.objects.filter(activo=True)
     serializer_class = BannerSerializer
     permission_classes = [permissions.AllowAny]
+
+
+# ----------------------
+# HEARTBEAT (Keep-Alive)
+# ----------------------
+# NOTA: Esta función debe estar FUERA de cualquier clase, pegada al margen izquierdo.
+def heartbeat(request):
+    """
+    Vista simple para mantener la conexión activa (keep-alive).
+    Solo devuelve un estado 200 OK.
+    """
+    return JsonResponse({'status': 'alive'}, status=200)
