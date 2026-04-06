@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 
-const DJANGO_BASE_URL = 'http://127.0.0.1:8000';
+const DJANGO_BASE_URL = 'https://backend-crimson-pond-4336.fly.dev';
 const DJANGO_MEDIA_PATH = '/media/';
 
 // --- MODAL DE ÉXITO DE COMPRA ---
