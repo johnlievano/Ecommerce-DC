@@ -218,61 +218,6 @@ export default function Nosotros() {
         </section>
 
       </main>
-
-      {/* --- FOOTER (Estándar) --- */}
-      <footer className="bg-[#009045] text-white pt-16 relative overflow-hidden font-sans border-t-[8px] border-yellow-400">
-        <div className="container mx-auto px-4 pb-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-            <div className="lg:col-span-1 flex justify-center lg:justify-start">
-              <img src="/icons/shop_footer.png" alt="Tienda Delicias Colombianas" className="w-full h-full object-contain max-w-[250px] drop-shadow-xl transform hover:scale-110 transition-transform cursor-pointer" />
-            </div>
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><MapPin size={24} className="text-yellow-300" /> Punto de fábrica</h3>
-              <div className="space-y-2 font-medium text-green-50"><p className="font-bold text-white">Dirección</p><p>Bogotá - Colombia</p></div>
-            </div>
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><Clock size={24} className="text-yellow-300" /> Horario</h3>
-              <div className="space-y-4 font-medium text-green-50"><div><p className="font-bold text-white">Lunes a viernes</p><p>8am - 4pm</p></div></div>
-            </div>
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><Phone size={24} className="text-yellow-300" /> Contacto</h3>
-              <div className="space-y-4 font-medium text-green-50"><div><p className="font-bold text-white">Línea nacional</p><p className="text-lg font-black text-yellow-300">018000 514020</p></div></div>
-            </div>
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-xl mb-6 flex items-center gap-2"><Mail size={24} className="text-yellow-300" /> Empleo</h3>
-              <div className="font-medium text-green-50"><a href="#" className="underline font-bold text-white hover:text-yellow-300">Enviar hoja de vida</a></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-[#007a3a] py-6 relative z-20 mt-12 lg:mt-0 shadow-lg">
-          <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4">
-            <div className="hidden lg:block lg:w-1/3"></div>
-            <div className="lg:-mt-20 relative z-30 lg:w-1/3 flex justify-center">
-              <div className="bg-white p-1 rounded-full border-[6px] border-[#007a3a] shadow-xl hover:scale-105 transition-transform w-24 h-24 md:w-32 md:h-32 flex items-center justify-center overflow-hidden">
-                  <img src="/icons/DC.png" alt="Logo Footer" className="w-full h-full object-cover" />
-              </div>
-            </div>
-            <div className="lg:w-1/3 flex flex-col sm:flex-row items-center justify-end gap-4">
-              <span className="font-bold text-sm uppercase">Síguenos</span>
-              <div className="flex gap-4">
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-400 hover:text-white transition-all"><Facebook size={20} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-400 hover:text-white transition-all"><Instagram size={20} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-400 hover:text-white transition-all"><Youtube size={20} /></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-[#006831] py-8 text-sm font-medium border-t border-[#00582a]">
-          <div className="container mx-auto px-4 text-center flex flex-col gap-2">
-             <p>© 2025 Delicias Colombianas</p>
-             <p className="text-xs opacity-70 flex items-center justify-center gap-1">
-               <Quote size={10} /> Calidad y Tradición <Quote size={10} />
-             </p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

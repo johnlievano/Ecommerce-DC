@@ -293,51 +293,7 @@ export default function Registro() {
         </div>
       </main>
 
-      {/* --- FOOTER COMPLETO --- */}
-      <footer className="bg-[#009045] text-white pt-12 mt-20 font-sans border-t-[8px] border-yellow-400">
-        <div className="container mx-auto px-4 pb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-            
-            <div className="lg:col-span-1 flex justify-center lg:justify-start">
-              <img src="/icons/shop_footer.png" alt="Tienda Delicias Colombianas" className="w-full h-full object-contain max-w-[200px] drop-shadow-xl transform hover:scale-110 transition-transform cursor-pointer" />
-            </div>
-
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><MapPin size={20} /> Fábrica</h3>
-              <div className="text-sm font-medium text-green-50 space-y-1"><p>Carrera 68 D Nº 98-23</p><p>Bogotá - Colombia</p></div>
-            </div>
-
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Clock size={20} /> Horarios</h3>
-              <div className="text-sm font-medium text-green-50 space-y-1"><p>Lunes a Viernes: 8am - 5pm</p></div>
-            </div>
-
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Phone size={20} /> Contacto</h3>
-              <div className="text-sm font-medium text-green-50 space-y-1"><p className="font-bold text-white text-base">018000 514020</p></div>
-            </div>
-
-            <div className="lg:col-span-1">
-              <h3 className="font-black text-lg mb-4 flex items-center gap-2 text-yellow-300"><Mail size={20} /> Empleo</h3>
-              <div className="text-sm font-medium text-green-50 space-y-1"><a href="#" className="underline hover:text-white">Enviar hoja de vida</a></div>
-            </div>
-
-          </div>
-        </div>
-
-        <div className="bg-[#007a3a] py-6 relative z-20 mt-4 shadow-inner">
-          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-             <div className="flex gap-4">
-                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Facebook size={18} /></a>
-                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Instagram size={18} /></a>
-                <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-yellow-400 hover:text-[#009045] transition-all"><Youtube size={18} /></a>
-             </div>
-             <div className="text-xs font-bold text-green-100 flex items-center gap-1">
-               <Quote size={10} /> Calidad y Tradición <Quote size={10} /> © 2025
-             </div>
-          </div>
-        </div>
-      </footer>
+    
     </div>
   )
 }
