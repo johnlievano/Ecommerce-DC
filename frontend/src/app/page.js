@@ -7,11 +7,11 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { apiService } from '../services/ApiService'
 import ScrollReveal from '../components/ScrollReveal'
 
-// ICONOS
 import {
-  ShoppingCart, User, Utensils, ImageOff, LogIn, LogOut,
-  Star, Tag, Percent, ArrowRight, Quote, Menu, X, ChevronRight, Truck,
-  MapPin, Phone, Mail, Facebook, Instagram, Youtube, Linkedin, MessageCircle // Iconos footer
+  ShoppingCart, User, LogIn, LogOut,
+  Star, Truck, Tag, Percent, ArrowRight,
+  Menu, X, Utensils, ImageOff, ChevronRight, XCircle, Heart,
+  MapPin, Gift, Search, CreditCard, Box, Quote, MessageCircle
 } from 'lucide-react'
 
 const DJANGO_BASE_URL = 'http://127.0.0.1:8000';
@@ -24,40 +24,42 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [currentHeroImg, setCurrentHeroImg] = useState(0)
+  const [modalOpen, setModalOpen] = useState({ isOpen: false, title: '', desc: '' })
 
   const { addToCart, getCartItemsCount } = useCart()
   const { user, logout } = useAuth()
 
-  // --- DATOS POR DEFECTO (FALLBACK) ---
-  // Si no has creado la tabla en Django aún, se mostrarán estos.
-  const defaultBanners = [
-    {
-      id: 1,
-      tag: "OFERTA WEB",
-      titulo: "20% OFF en Tortas",
-      subtitulo: "Celebra los momentos dulces con descuento.",
-      imagen: "/productos/hero-brownie.png",
-      color_fondo: "bg-[#741b47]",
-      color_texto: "text-pink-100",
-      texto_boton: "VER TORTAS",
-      enlace: "/productos"
-    },
-    {
-      id: 2,
-      tag: "DOMICILIOS",
-      titulo: "Desayunos Sorpresa",
-      subtitulo: "El regalo perfecto llega a la puerta.",
-      imagen: "/productos/combo-ejemplo.png",
-      color_fondo: "bg-[#e69138]",
-      color_texto: "text-orange-50",
-      texto_boton: "PEDIR AHORA",
-      enlace: "/productos"
-    }
+  // Rutas actualizadas basadas en los archivos locales
+  const heroImages = [
+    "/productos/empanada.png",
+    "/productos/cafe.png",
+    "/productos/chicharron.png",
+    "/productos/queso.png"
   ];
 
-  // --- EFECTOS (CARGA DE DATOS) ---
+  // Rotación cada 10 segundos
+  useEffect(() => {
+    const heroTimer = setInterval(() => {
+      setCurrentHeroImg((prev) => (prev + 1) % heroImages.length)
+    }, 10000) 
+    return () => clearInterval(heroTimer)
+  }, [heroImages.length])
 
-  // 1. Carrusel Automático
+  // Rutas actualizadas para el carrusel
+  const carouselItems = [
+    { id: 1, title: "Café de Origen", desc: "Aroma y cuerpo del Eje Cafetero directo a tu taza.", image: "/productos/cafe.png", color: "bg-amber-600", textColor: "text-amber-100" },
+    { id: 2, title: "Galletas Tradicionales", desc: "El final dulce perfecto para cualquier comida.", image: "/productos/galletas.png", color: "bg-pink-500", textColor: "text-pink-100" },
+    { id: 3, title: "Queso Fresco", desc: "Suavidad y sabor de campo auténtico.", image: "/productos/queso.png", color: "bg-blue-500", textColor: "text-blue-100" },
+  ]
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselItems.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [carouselItems.length])
+
   useEffect(() => {
     if (bannerItems.length === 0) return;
     const timer = setInterval(() => {
@@ -71,24 +73,19 @@ export default function Home() {
     const fetchData = async () => {
       setLoading(true)
       try {
-        // A. Cargar Productos Destacados
-        if (!apiService || !apiService.getProducts) throw new Error("ApiService no configurado")
-        const productsData = await apiService.getProducts()
-
-        if (productsData && Array.isArray(productsData)) {
-          const allProducts = productsData.map(product => ({
-            ...product,
-            imagen: product.imagen && !product.imagen.includes('http')
-              ? `${DJANGO_BASE_URL}${DJANGO_MEDIA_PATH}${product.imagen}`
-              : product.imagen,
-            precio: parseFloat(product.precio) || 0,
-            bgColor: 'bg-green-50'
-          }));
-          // Filtrar destacados
-          const featured = allProducts
+        const data = await apiService.getProducts()
+        if (data && Array.isArray(data)) {
+          const transformed = data
             .filter(p => p.destacado === true || p.destacado === 1 || p.destacado === "true")
-            .slice(0, 4);
-          setFeaturedProducts(featured);
+            .slice(0, 4)
+            .map(product => ({
+              ...product,
+              imagen: product.imagen && !product.imagen.includes('http')
+                ? `${DJANGO_BASE_URL}${DJANGO_MEDIA_PATH}${product.imagen}`
+                : product.imagen,
+              precio: parseFloat(product.precio) || 0
+            }))
+          setFeaturedProducts(transformed)
         }
 
 
@@ -127,8 +124,6 @@ export default function Home() {
 
       } catch (error) {
         console.warn("Error API:", error.message)
-        // En caso de error total, ponemos datos falsos para que se vea diseño
-        setBannerItems(defaultBanners);
       } finally {
         setLoading(false)
       }
@@ -136,21 +131,46 @@ export default function Home() {
     fetchData()
   }, [])
 
-  const handleAddToCart = (product) => {
-    addToCart(product)
-  }
+  const openModal = (title, desc) => setModalOpen({ isOpen: true, title, desc })
+  const handleAddToCart = (product) => addToCart(product)
 
-  if (loading && featuredProducts.length === 0) {
-    return <LoadingSpinner text="Horneando delicias..." />
-  }
+  const pasosFunciona = [
+    { icon: Search, title: "1. Explora", desc: "Navega por nuestras categorías dulces y antojos." },
+    { icon: ShoppingCart, title: "2. Agrega", desc: "Llena tu carrito con tus productos favoritos." },
+    { icon: CreditCard, title: "3. Paga Fácil", desc: "Métodos seguros y rápidos de pago online." },
+    { icon: Box, title: "4. Recibe", desc: "¡Disfruta del sabor tradicional en tu puerta!" },
+  ];
+
+  const testimonios = [
+    { name: "Carolina G.", quote: "¡Las empanadas llegaron calientes y crocantes, el sabor es idéntico al de mi abuela!" },
+    { name: "Juan P.", quote: "El café de origen tiene un aroma increíble. Mi pedido llegó súper rápido." },
+    { name: "Luisa F.", quote: "Dulces deliciosos y muy bien empacados. Me encantó la experiencia." },
+  ];
+
+  if (loading && featuredProducts.length === 0) return <LoadingSpinner text="Cargando delicias..." />
 
   return (
-    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden relative flex flex-col">
+      {/* MODAL GLOBAL */}
+      {modalOpen.isOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl border-4 border-yellow-400 relative">
+            <div className="flex justify-between items-center mb-4 border-b-2 border-green-100 pb-2">
+              <h3 className="text-2xl font-black text-[#4a3b32]">{modalOpen.title}</h3>
+              <button onClick={() => setModalOpen({ isOpen: false, title: '', desc: '' })} className="hover:rotate-90 transition-transform">
+                <XCircle size={28} className="text-gray-400 hover:text-red-500" />
+              </button>
+            </div>
+            <p className="text-gray-600 font-medium mb-6 leading-relaxed">{modalOpen.desc}</p>
+            <button onClick={() => setModalOpen({ isOpen: false, title: '', desc: '' })} className="w-full bg-[#009045] text-white font-black py-3 rounded-xl shadow-lg hover:bg-[#007a3a] transition-colors">Entendido</button>
+          </div>
+        </div>
+      )}
 
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <header className="fixed top-2 md:top-4 left-0 right-0 z-50 px-2 md:px-4">
-        <div className="container mx-auto bg-[#009045] text-white rounded-2xl md:rounded-full shadow-2xl py-3 px-4 md:px-8 flex flex-wrap justify-between items-center border-b-[4px] border-[#007a3a] relative">
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
+        <div className="container mx-auto bg-[#009045] text-white rounded-2xl md:rounded-full shadow-2xl py-3 px-4 md:px-8 flex justify-between items-center border-b-[4px] border-[#007a3a]">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className="bg-white p-0 rounded-full border-2 border-yellow-400 group-hover:rotate-12 transition-transform shadow-md w-12 h-12 overflow-hidden">
               <img src="/icons/DC.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
@@ -159,154 +179,70 @@ export default function Home() {
               <p className="text-xs text-yellow-300 font-bold">COLOMBIANAS</p>
             </div>
           </Link>
-
-          <nav className="hidden lg:flex gap-8 font-black text-lg tracking-wide">
+          <nav className="hidden lg:flex gap-8 font-black text-lg">
             {['Inicio', 'Productos', 'Nosotros', 'Contacto'].map((item) => (
-              <Link key={item} href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`} className="hover:text-yellow-300 transition-all duration-300 relative group py-2">
-                {item.toUpperCase()}
-                <span className="absolute bottom-0 left-0 w-0 h-1 bg-yellow-400 rounded-full group-hover:w-full transition-all duration-300"></span>
-              </Link>
+              <Link key={item} href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`} className="hover:text-yellow-300 transition-all py-2">{item.toUpperCase()}</Link>
             ))}
           </nav>
-
-          <div className="flex items-center gap-4 md:gap-6 shrink-0">
-            {!user ? (
-              <div className="hidden md:flex items-center gap-4 font-bold text-base">
-                <Link href="/login" className="flex items-center gap-2 hover:text-yellow-300 transition-colors"><LogIn size={18} /> Ingresar</Link>
-                <Link href="/registro" className="bg-yellow-400 text-[#009045] px-5 py-2 rounded-full font-black hover:bg-white hover:scale-105 shadow-md transition-all">Regístrate</Link>
-              </div>
-            ) : (
-              <div className="hidden md:flex items-center gap-3 font-bold text-sm">
-                <div className="flex items-center gap-1 bg-[#007a3a] px-3 py-1 rounded-full"><User size={16} className="text-yellow-300" /><span className="truncate max-w-[100px]">{user.nombre}</span></div>
-                <button onClick={logout} className="hover:text-red-300 transition-colors"><LogOut size={18} /></button>
-              </div>
-            )}
-            <Link href="/carrito" className="relative group hover:scale-110 transition-transform">
-              <div className="bg-[#007a3a] p-2 md:px-4 md:py-2 rounded-full font-bold hover:bg-yellow-400 hover:text-[#009045] transition-all flex items-center gap-2">
-                <ShoppingCart size={20} />
-                {getCartItemsCount() > 0 && <span className="absolute -top-1 -right-1 md:-top-2 md:-right-2 bg-red-600 text-white text-xs font-black w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full border-2 border-white">{getCartItemsCount()}</span>}
-              </div>
+          <div className="flex items-center gap-4">
+            <Link href="/carrito" className="relative bg-[#007a3a] p-2 md:px-4 rounded-full font-bold hover:bg-yellow-400 hover:text-[#009045] transition-all flex items-center gap-2">
+              <ShoppingCart size={20} />
+              {getCartItemsCount() > 0 && <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">{getCartItemsCount()}</span>}
             </Link>
-            <button className="lg:hidden text-white p-2 hover:text-yellow-300 transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            <button className="lg:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}</button>
           </div>
-
-          {mobileMenuOpen && (
-            <div className="absolute top-full left-0 w-full mt-2 bg-[#009045] rounded-2xl shadow-xl border-t-4 border-yellow-400 overflow-hidden lg:hidden z-50 animate-fade-in">
-              <div className="flex flex-col p-4 space-y-2">
-                {['Inicio', 'Productos', 'Nosotros', 'Contacto'].map((item) => (
-                  <Link key={item} href={item === 'Inicio' ? '/' : `/${item.toLowerCase()}`} className="block py-3 px-4 rounded-xl hover:bg-[#007a3a] font-black text-lg transition-colors border-b border-[#007a3a] last:border-0" onClick={() => setMobileMenuOpen(false)}>
-                    {item.toUpperCase()}
-                  </Link>
-                ))}
-                {!user ? (
-                  <div className="flex flex-col gap-2 pt-2 mt-2 border-t border-[#007a3a]">
-                    <Link href="/login" className="py-2 px-4 hover:text-yellow-300 font-bold flex items-center gap-2"><LogIn size={18} /> Ingresar</Link>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#007a3a] px-4">
-                    <div className="flex items-center gap-2 font-bold"><User size={18} className="text-yellow-300" /> {user.nombre}</div>
-                    <button onClick={logout} className="text-red-300 font-bold text-sm">Salir</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative bg-[#009045] pt-32 md:pt-44 pb-32 rounded-br-[4rem] md:rounded-br-[8rem] shadow-xl z-20">
+      {/* HERO SECTION */}
+      <section className="relative bg-[#009045] pt-44 pb-32 rounded-br-[4rem] md:rounded-br-[8rem] shadow-xl z-10 border-b-8 border-yellow-400">
         <div className="container mx-auto px-4 relative z-20">
           <div className="flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="flex-1 text-center md:text-left space-y-6">
               <ScrollReveal>
-                <span className="inline-flex items-center gap-2 bg-yellow-400 text-[#009045] px-4 py-1 rounded-full font-black text-sm mb-4 transform -rotate-2 shadow-lg">
-                  <Star size={16} fill="currentColor" /> ¡NUEVOS SABORES!
-                </span>
-                <h1 className="text-5xl md:text-7xl font-black text-white leading-tight drop-shadow-md">
-                  Sabor Irresistible <br />
-                  <span className="text-yellow-300">100% Colombiano</span>
-                </h1>
-                <p className="text-xl text-green-100 max-w-lg mx-auto md:mx-0 font-medium">
-                  Descubre la tradición en cada mordida.
-                </p>
-                <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                  <Link href="/productos" className="bg-white text-[#009045] px-8 py-4 rounded-full font-black text-lg shadow-lg hover:translate-y-1 transition-all flex items-center gap-2">
-                    VER PRODUCTOS <ArrowRight size={20} strokeWidth={3} />
+                <span className="inline-flex items-center gap-2 bg-white text-[#009045] px-5 py-1.5 rounded-full font-black text-sm mb-4 shadow-lg ring-4 ring-yellow-400"><Heart size={16} className="text-red-500" fill="currentColor" /> EL SABOR DE NUESTRA TIERRA</span>
+                <h1 className="text-5xl md:text-7xl font-black text-white leading-tight">Sabor Irresistible <br /><span className="text-yellow-300">100% Colombiano</span></h1>
+                <p className="text-xl text-green-100 max-w-lg mx-auto md:mx-0 font-medium">Lo mejor de nuestra tradición para alegrar cada uno de tus días.</p>
+                <div className="pt-6">
+                  {/* Botón mejorado */}
+                  <Link href="/productos" className="group bg-yellow-400 text-[#009045] px-10 py-4 rounded-full font-black text-lg shadow-lg hover:bg-yellow-300 hover:scale-105 hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 w-max mx-auto md:mx-0">
+                    DESCUBRE EL SABOR <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </ScrollReveal>
             </div>
-            <div className="flex-1 flex justify-center items-center relative">
-              <div className="absolute w-[400px] h-[400px] bg-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-              <img src="/productos/hero-brownie.png" alt="Brownie" className="w-full max-w-[500px] object-contain drop-shadow-2xl animate-[bounce_3s_infinite]" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- CARRUSEL DE NOVEDADES (BACKEND CONNECTED) --- */}
-      <section className="py-12 bg-gray-50 overflow-hidden">
-
-        {/* TITULO */}
-        <div className="container mx-auto px-4 mb-8 text-center">
-          <h3 className="text-2xl font-black text-[#4a3b32] uppercase tracking-wider flex items-center justify-center gap-3">
-            <Percent className="text-[#009045]" /> Novedades y Ofertas
-          </h3>
-        </div>
-
-        {/* SLIDER */}
-        <div className="container mx-auto px-4">
-          <div className="relative w-full max-w-6xl mx-auto h-[350px] md:h-[400px] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
-            {bannerItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`absolute inset-0 transition-transform duration-700 ease-in-out ${item.color_fondo || 'bg-gray-800'} flex flex-col md:flex-row`}
-                style={{ transform: `translateX(${(index - currentSlide) * 100}%)` }}
-              >
-                {/* Texto */}
-                <div className="w-full md:w-1/2 h-full flex flex-col justify-center items-start p-8 md:p-16 relative z-10">
-                  <span className="bg-yellow-400 text-[#009045] text-xs font-black px-3 py-1 rounded-full mb-4 animate-pulse uppercase">
-                    {item.tag}
-                  </span>
-                  <h2 className="text-4xl md:text-5xl font-black text-white mb-2 leading-none">{item.titulo}</h2>
-                  <p className={`text-lg font-medium ${item.color_texto || 'text-white'} mb-6`}>{item.subtitulo}</p>
-
-                  <Link href={item.enlace || '/productos'} className="bg-white text-gray-900 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-yellow-300 transition-colors flex items-center gap-2 group">
-                    {item.texto_boton} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-
-                {/* Imagen */}
-                <div className="w-full md:w-1/2 h-full relative flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-white/10 skew-x-12 transform origin-bottom-left"></div>
-                  <img
-                    src={item.imagen}
-                    alt={item.titulo}
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                    className="relative z-10 w-3/4 h-3/4 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              </div>
-            ))}
-
-            {/* Puntos */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-              {bannerItems.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-white w-8' : 'bg-white/40 w-2 hover:bg-white/70'}`}
-                />
+            <div className="flex-1 flex justify-center items-center relative h-[450px] w-full max-w-[500px]">
+              <div className="absolute w-[400px] h-[400px] bg-yellow-400/30 rounded-full blur-3xl animate-pulse"></div>
+              {heroImages.map((img, index) => (
+                <img key={index} src={img} alt="Hero" className={`absolute w-full h-full object-contain drop-shadow-2xl transition-all duration-1000 ${index === currentHeroImg ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`} />
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- FAVORITOS (GRID) --- */}
+      {/* CÓMO FUNCIONA */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 mb-16 text-center">
+          <ScrollReveal>
+            <h3 className="text-4xl font-black text-[#4a3b32] flex items-center justify-center gap-4"><Utensils className="text-[#009045]" /> Pide tu Antojo en 4 Pasos</h3>
+            <div className="w-32 h-2 bg-yellow-400 mx-auto mt-2 rounded-full"></div>
+          </ScrollReveal>
+        </div>
+        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {pasosFunciona.map((paso, i) => (
+            <ScrollReveal key={i} className={`delay-${i * 150}`}>
+              <div className="bg-[#fffdf7] border-4 border-yellow-100 rounded-[2.5rem] p-8 text-center h-full hover:border-yellow-300 transition-all">
+                <div className="bg-yellow-400 text-[#009045] p-6 rounded-full mb-6 inline-block"><paso.icon size={40} /></div>
+                <h4 className="text-2xl font-black text-[#4a3b32] mb-3">{paso.title}</h4>
+                <p className="text-gray-600 font-medium text-sm leading-relaxed">{paso.desc}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* SECCIÓN FAVORITOS */}
       <section className="py-20 bg-[#fffdf7]">
         <div className="container mx-auto px-4">
           <ScrollReveal>
@@ -323,7 +259,7 @@ export default function Home() {
               {featuredProducts.map((product, index) => (
                 <ScrollReveal key={product.id} className={`delay-${index * 100}`}>
                   <div className="group relative bg-white rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border-2 border-transparent hover:border-yellow-400 h-full flex flex-col">
-                    <div className={`h-48 ${product.bgColor || 'bg-gray-100'} flex items-center justify-center relative overflow-hidden`}>
+                    <div className="h-48 bg-gray-50 flex items-center justify-center relative overflow-hidden">
                       {product.imagen ? (
                         <img src={product.imagen} alt={product.nombre} className="h-48 w-full object-cover object-center drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
                       ) : (
@@ -351,140 +287,96 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- PROMOCIONES FUNCIONALES --- */}
-      <section className="bg-[#4a3b32] pt-24 pb-24 relative overflow-visible rounded-tl-[4rem] md:rounded-tl-[8rem] z-10 -mt-10">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            {/* CARD 1: Descuentos */}
-            <ScrollReveal>
-              <div className="bg-[#009045] rounded-[2rem] p-8 text-white h-full flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl min-h-[300px]">
-                <div className="absolute top-4 right-4 opacity-20"><Percent size={80} /></div>
-                <div>
-                  <h3 className="text-2xl font-black mb-4">¡Ofertas del Mes!</h3>
-                  <p className="font-medium opacity-90 mb-6">Descuentos especiales en productos seleccionados.</p>
+      {/* GALERÍA DE SABORES */}
+      <section className="py-24 bg-green-50 overflow-hidden">
+        <div className="container mx-auto px-4 mb-12 text-center"><h3 className="text-4xl font-black text-[#4a3b32] flex items-center justify-center gap-4"><Star className="text-yellow-400" fill="currentColor" /> Galería de Sabores</h3><div className="w-32 h-2.5 bg-[#009045] mx-auto mt-2 rounded-full"></div></div>
+        <div className="container mx-auto px-4">
+          <div className="relative w-full max-w-5xl mx-auto h-[480px] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white ring-8 ring-green-100/50">
+            {carouselItems.map((item, index) => (
+              <div key={item.id} className={`absolute inset-0 transition-transform duration-700 ease-in-out ${item.color} flex flex-col md:flex-row`} style={{ transform: `translateX(${(index - currentSlide) * 100}%)` }}>
+                <div className="w-full md:w-1/2 h-1/2 md:h-full relative bg-white/20 flex items-center justify-center p-10">
+                  <img src={item.image} alt={item.title} className="relative z-10 w-full h-full object-contain drop-shadow-2xl" />
                 </div>
-                {/* AHORA ES UN LINK FUNCIONAL A PRODUCTOS */}
-                <Link href="/productos" className="bg-white text-[#009045] font-bold py-3 px-6 rounded-full w-max hover:bg-yellow-400 transition-colors flex items-center gap-2">
-                  VER DESCUENTOS <Tag size={18} />
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            {/* CARD 2: Cotizar (Contacto) */}
-            <ScrollReveal className="delay-100">
-              <div className="bg-yellow-400 rounded-[2rem] p-8 text-[#4a3b32] h-full flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl min-h-[300px]">
-                <div>
-                  <span className="bg-[#4a3b32] text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">POPULAR</span>
-                  <h3 className="text-3xl font-black mb-4 leading-none">Catering y Eventos</h3>
-                  <p className="font-bold text-lg mb-6">Atendemos tus reuniones empresariales.</p>
+                <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-start p-10 md:p-14 text-white">
+                  <div className="bg-white/30 px-5 py-1.5 rounded-full text-xs font-black uppercase mb-5">Recomendado Dulce</div>
+                  <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">{item.title}</h2>
+                  <p className={`text-lg font-medium ${item.textColor} mb-10 leading-relaxed`}>{item.desc}</p>
+                  <Link href="/productos" className="bg-white text-gray-900 font-black py-3 px-10 rounded-full shadow-lg hover:bg-yellow-300 transition-all flex items-center gap-2">Ver Detalles <ArrowRight size={18} /></Link>
                 </div>
-                <div className="absolute right-4 bottom-20 opacity-50"><Utensils size={80} /></div>
-                {/* AHORA LLEVA A CONTACTO */}
-                <Link href="/contacto" className="bg-[#4a3b32] text-white font-bold py-3 px-6 rounded-full w-full hover:bg-opacity-90 transition-colors mt-auto z-10 relative flex justify-center">
-                  COTIZAR AHORA
-                </Link>
               </div>
-            </ScrollReveal>
-
-            {/* CARD 3: Pedir Ya (Productos) */}
-            <ScrollReveal className="delay-200">
-              <div className="bg-[#9c27b0] rounded-[2rem] p-8 text-white h-full flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl min-h-[300px]">
-                <div>
-                  <h3 className="text-2xl font-black mb-4">Envíos a Domicilio</h3>
-                  <p className="font-medium opacity-90 mb-6">Llegamos a la puerta de tu casa en tiempo récord.</p>
-                </div>
-                <div className="absolute bottom-4 right-4 opacity-20"><Truck size={100} /></div>
-                {/* LLEVA A PRODUCTOS */}
-                <Link href="/productos" className="bg-white text-[#9c27b0] font-bold py-3 px-6 rounded-full w-max hover:bg-yellow-400 hover:text-white transition-colors flex items-center gap-2">
-                  PEDIR YA <ChevronRight size={18} />
-                </Link>
-              </div>
-            </ScrollReveal>
-
+            ))}
           </div>
         </div>
       </section>
 
-      {/* --- FOOTER FUNCIONAL --- */}
-      <footer className="bg-[#009045] text-white mt-auto flex flex-col font-sans border-t-[8px] border-yellow-400">
-        <div className="container mx-auto px-4 md:px-8 py-12 pb-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Contáctanos</h3>
-              <p className="mb-2 text-green-50">Desde celular a nivel nacional</p>
-              <p className="font-bold text-yellow-300 text-lg mb-4">601 486 5000</p>
-              <p className="text-sm mb-4 text-green-50">Opción 1: Ventas<br />Opción 3: Posventa</p>
-              <p className="mb-2 text-green-50">Línea Whatsapp</p>
-              <p className="font-bold text-yellow-300 text-lg">311 2281010</p>
+      {/* PROMOCIONES FIJAS (Con borde superior curvo recuperado) */}
+      <section className="bg-[#4a3b32] pt-36 pb-32 border-t-8 border-yellow-400 rounded-tl-[4rem] md:rounded-tl-[8rem] relative z-20 -mt-12">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
+          <ScrollReveal>
+            <div className="bg-[#009045] rounded-[2.5rem] p-10 border-4 border-[#00a850] min-h-[400px] flex flex-col shadow-xl">
+              <Percent size={60} className="mb-4 opacity-50" />
+              <h3 className="text-2xl font-black mb-4">Ofertas del Mes</h3>
+              <p className="font-medium mb-8">Hasta 20% de descuento en postres tradicionales cada fin de semana.</p>
+              <button onClick={() => openModal('Descuentos Activos', 'Aplica el código FINDE20 al hacer checkout para un 20% en postres y 2x1 en bebidas.')} className="mt-auto bg-white text-[#009045] font-black py-3 rounded-xl hover:bg-yellow-300 transition-all">VER DESCUENTOS</button>
             </div>
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Nosotros</h3>
-              <ul className="space-y-2">
-                {/* Enlaces funcionales */}
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Quiénes somos</Link></li>
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Nuestra Historia</Link></li>
-                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</Link></li>
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Sostenibilidad</Link></li>
-                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</Link></li>
-              </ul>
+          </ScrollReveal>
+          <ScrollReveal className="delay-150">
+            <div className="bg-yellow-400 text-[#4a3b32] rounded-[2.5rem] p-10 border-4 border-white min-h-[400px] flex flex-col shadow-xl">
+              <Utensils size={60} className="mb-4 opacity-50" />
+              <h3 className="text-3xl font-black mb-4">Catering</h3>
+              <p className="font-bold text-lg mb-8">Llevamos pasabocas tradicionales a tus eventos empresariales y fiestas.</p>
+              <button onClick={() => openModal('Servicio de Catering', 'Comunícate al WhatsApp: 311 2281010 para cotizaciones personalizadas según tu volumen de invitados.')} className="mt-auto bg-[#4a3b32] text-white font-black py-3 rounded-xl hover:bg-opacity-90 transition-colors">COTIZAR AHORA</button>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Legales</h3>
-                <ul className="space-y-2 text-sm text-green-50">
-                  {/* Estos pueden quedar con # si no existen las páginas aún */}
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Aviso de privacidad</a></li>
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Políticas</a></li>
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Términos</a></li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Servicios</h3>
-                <ul className="space-y-2 text-sm text-green-50">
-                  <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Domicilios</Link></li>
-                  <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Retiro en tienda</Link></li>
-                </ul>
-              </div>
+          </ScrollReveal>
+          <ScrollReveal className="delay-300">
+            <div className="bg-[#9c27b0] rounded-[2.5rem] p-10 border-4 border-[#b149c4] min-h-[400px] flex flex-col shadow-xl">
+              <Truck size={60} className="mb-4 opacity-50" />
+              <h3 className="text-2xl font-black mb-4">Envíos Rápidos</h3>
+              <p className="font-medium mb-8">Empaques especiales que garantizan frescura en la puerta de tu casa.</p>
+              <button onClick={() => openModal('Cobertura de Envíos', 'Entregas garantizadas en Bogotá en menos de 60 minutos. Costo de envío calculado al finalizar la compra.')} className="mt-auto bg-white text-[#9c27b0] font-black py-3 rounded-xl hover:bg-yellow-300 transition-all">VER COBERTURA</button>
             </div>
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Club Delicias</h3>
-              <ul className="space-y-2 mb-6">
-                <li><Link href="/registro" className="hover:text-yellow-300 transition-colors">Inscríbete</Link></li>
-                <li><Link href="/productos" className="hover:text-yellow-300 transition-colors">Beneficios</Link></li>
-              </ul>
-              <div className="flex space-x-3 mt-4">
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Facebook size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Instagram size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Linkedin size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Youtube size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><MessageCircle size={18} /></a>
-              </div>
-            </div>
-          </div>
+          </ScrollReveal>
         </div>
+      </section>
 
-        <div className="relative bg-[#007a3a] pt-16 pb-6 mt-auto shadow-inner">
-          <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 z-20">
-            <div className="bg-white p-1 rounded-full border-[6px] border-[#007a3a] shadow-xl hover:scale-105 transition-transform w-28 h-28 flex items-center justify-center overflow-hidden">
-              <img src="/icons/DC.png" alt="Logo Footer" className="w-full h-full object-cover" />
-            </div>
-          </div>
-          <div className="container mx-auto px-4 text-center flex flex-col gap-2 relative z-10">
-            <p className="text-sm font-medium">© 2025 Delicias Colombianas. Todos los derechos reservados.</p>
-            <p className="text-xs opacity-70 flex items-center justify-center gap-1 text-yellow-300">
-              <Quote size={10} /> Calidad y Tradición <Quote size={10} />
-            </p>
-            <p className="text-xs text-green-100/60 mt-2">
-              Plantilla de <a href="https://aurea-web.com" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-yellow-300 transition-colors">Áurea Web</a>
-            </p>
-          </div>
+      {/* TESTIMONIOS (Mejorado con Hover) */}
+      <section className="py-24 bg-[#fffdf7]">
+        <div className="container mx-auto px-4 mb-16 text-center">
+          <ScrollReveal><h3 className="text-4xl font-black text-[#4a3b32] flex items-center justify-center gap-4"><MessageCircle className="text-[#009045]" /> Clientes Felices</h3><div className="w-32 h-2 bg-yellow-400 mx-auto mt-2 rounded-full"></div></ScrollReveal>
         </div>
-      </footer>
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {testimonios.map((tes, i) => (
+            <ScrollReveal key={i} className={`delay-${i * 150}`}>
+              <div className="bg-white rounded-[2.5rem] p-10 shadow-lg border-2 border-transparent hover:border-yellow-400 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 relative cursor-default">
+                <Quote className="absolute top-6 left-6 text-yellow-300 opacity-30" size={60} />
+                <div className="flex text-yellow-400 mb-6 gap-1 relative z-10"><Star size={20} fill="currentColor" /><Star size={20} fill="currentColor" /><Star size={20} fill="currentColor" /><Star size={20} fill="currentColor" /><Star size={20} fill="currentColor" /></div>
+                <p className="text-gray-700 italic mb-8 relative z-10 font-medium">"{tes.quote}"</p>
+                <p className="font-black text-[#4a3b32] border-t pt-4 border-gray-100">{tes.name}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* HISTORIA (Imagen Unsplash) */}
+      <section className="py-28 bg-white overflow-hidden">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-16">
+          <ScrollReveal className="flex-1 w-full">
+            <div className="rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white ring-8 ring-green-50 min-h-[350px] relative">
+              <img 
+                src="/images/herencia.webp" 
+                alt="Herencia Colombiana" 
+                className="absolute inset-0 w-full h-full object-cover hover:scale-110 transition-transform duration-700" 
+              />
+            </div>
+          </ScrollReveal>
+          <ScrollReveal className="flex-1 space-y-6 delay-200">
+            <h3 className="text-4xl md:text-5xl font-black text-[#4a3b32]">Dulce Herencia <br /><span className="text-[#009045]">Colombiana</span></h3>
+            <p className="text-lg text-gray-700 font-medium">Nacimos del sueño de compartir recetas ancestrales preparadas con amor. Cada bocado es un viaje directo a los hogares más tradicionales de Colombia.</p>
+            <Link href="/nosotros" className="bg-[#009045] text-white px-10 py-4 rounded-full font-black text-lg shadow-lg hover:scale-105 transition-transform flex items-center gap-3 w-max">CONOCE NUESTRA HISTORIA <ChevronRight size={20}/></Link>
+          </ScrollReveal>
+        </div>
+      </section>
     </div>
   )
 }

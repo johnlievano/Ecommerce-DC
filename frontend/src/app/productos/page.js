@@ -6,19 +6,15 @@ import Link from 'next/link'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { apiService } from '../../services/ApiService'
 
-// ICONOS
-import {
-  ShoppingCart, X, Search, Filter, ArrowLeft, ArrowRight,
+import { 
+  ShoppingCart, X, Search, ArrowRight,
   LayoutGrid, CheckCircle, ImageOff, LogIn, LogOut, User, Menu,
-  Star, Tag, MapPin, Clock, Phone, Mail, Facebook, Instagram, Youtube, Quote,
-  Linkedin, MessageCircle, // <--- Agregados para el footer
-  Drumstick, Milk, Croissant, Coffee, Candy
+  Tag, Drumstick, Milk, Croissant, Coffee, Candy 
 } from 'lucide-react'
 
 const DJANGO_BASE_URL = 'http://127.0.0.1:8000';
 const DJANGO_MEDIA_PATH = '/media/';
 
-// --- MODAL DE ÉXITO (Estilo Retail Moderno) ---
 const SuccessModal = ({ isOpen, onClose, lastAdded, recommendations, onAddRecommendation }) => {
   if (!isOpen) return null;
 
@@ -82,7 +78,6 @@ const SuccessModal = ({ isOpen, onClose, lastAdded, recommendations, onAddRecomm
   )
 }
 
-// --- MODAL DE DETALLE (VISTA RÁPIDA) ---
 const ProductDetailModal = ({ product, onClose, onAddToCart }) => {
   const [isClosing, setIsClosing] = useState(false)
   const handleClose = () => { setIsClosing(true); setTimeout(onClose, 300) }
@@ -92,8 +87,7 @@ const ProductDetailModal = ({ product, onClose, onAddToCart }) => {
     <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'opacity-100'}`} onClick={handleClose}>
       <div className={`bg-white rounded-[2rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative transition-all duration-300 transform ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'scale-100 opacity-100 translate-y-0'}`} onClick={e => e.stopPropagation()}>
         <button onClick={handleClose} className="absolute top-4 right-4 bg-white/80 hover:bg-red-100 text-gray-500 hover:text-red-500 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-20 shadow-sm"><X size={20} /></button>
-
-        {/* Lado Izquierdo: Color del producto */}
+        
         <div className={`md:w-1/2 p-10 flex items-center justify-center ${product.cardColor} relative overflow-hidden group`}>
           <div className="absolute inset-0 bg-black/10 mix-blend-multiply"></div>
           <div className="absolute w-64 h-64 bg-white/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
@@ -133,21 +127,19 @@ export default function Productos() {
   const { addToCart, getCartItemsCount } = useCart()
   const { user, logout } = useAuth()
 
-  // COLORES "VINTAGE" CARACTERÍSTICOS
   const getCardColor = (categoria) => {
     const colors = {
-      'Carnes': 'bg-[#741b47]',    // Vino tinto
-      'Lacteos': 'bg-[#2062af]',   // Azul fuerte
-      'Panadería': 'bg-[#c27803]', // Ocre
-      'Bebidas': 'bg-[#5b3626]',   // Café oscuro
-      'Dulces': 'bg-[#e69138]',    // Naranja
-      'default': 'bg-[#009045]'    // Verde
+      'Carnes': 'bg-[#741b47]',
+      'Lacteos': 'bg-[#2062af]',
+      'Panadería': 'bg-[#c27803]',
+      'Bebidas': 'bg-[#5b3626]',
+      'Dulces': 'bg-[#e69138]',
+      'default': 'bg-[#009045]'
     }
     const key = Object.keys(colors).find(k => categoria && k.toLowerCase() === categoria.toLowerCase())
     return colors[key] || colors['default']
   }
 
-  // CATEGORÍAS
   const categories = [
     { id: 'todos', name: 'Todo', icon: <LayoutGrid size={18} />, count: 0 },
     { id: 'Carnes', name: 'Carnes', icon: <Drumstick size={18} />, count: 0 },
@@ -246,8 +238,6 @@ export default function Productos() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans text-slate-800">
-
-      {/* HEADER */}
       <header className="fixed top-2 md:top-4 left-0 right-0 z-50 px-2 md:px-4">
         <div className="container mx-auto bg-[#009045] text-white rounded-2xl md:rounded-full shadow-2xl py-3 px-4 md:px-8 flex flex-wrap justify-between items-center border-b-[4px] border-[#007a3a] relative">
           <Link href="/" className="flex items-center gap-2 group shrink-0">
@@ -302,7 +292,6 @@ export default function Productos() {
         </div>
       </header>
 
-      {/* CABECERA (Estilo Retail) */}
       <div className="bg-[#009045] pt-32 md:pt-40 pb-20 rounded-br-[4rem] md:rounded-br-[6rem] shadow-lg mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -311,13 +300,10 @@ export default function Productos() {
         </div>
       </div>
 
-      {/* MODALS */}
       {selectedProduct && <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onAddToCart={handleAddToCart} />}
       <SuccessModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} lastAdded={lastAddedProduct} recommendations={products} onAddRecommendation={handleAddToCart} />
 
       <main className="container mx-auto px-2 md:px-4 pb-20">
-
-        {/* BUSCADOR Y FILTROS STICKY */}
         <div className="sticky top-20 z-40 bg-[#f8f9fa] py-2 transition-all">
           <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-200 flex gap-2 mb-3">
             <div className="relative flex-1">
@@ -340,7 +326,6 @@ export default function Productos() {
           </div>
         </div>
 
-        {/* --- GRID DE PRODUCTOS: ESTILO VINTAGE COLORIDO CON SOMBRA CIRCULAR --- */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 mt-2">
             {filteredProducts.map((product) => (
@@ -352,42 +337,46 @@ export default function Productos() {
                     ${product.cardColor} text-white
                  `}
               >
-                {/* Badges */}
-                <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 pointer-events-none">
-                  {product.oferta && <span className="bg-white text-red-500 text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">OFERTA</span>}
-                  {product.nuevo && <span className="bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">NUEVO</span>}
-                </div>
+                 <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 pointer-events-none">
+                    {product.oferta && <span className="bg-white text-red-500 text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">OFERTA</span>}
+                    {product.nuevo && <span className="bg-yellow-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">NUEVO</span>}
+                 </div>
 
-                {/* Imagen con "Sombrita" Circular Detrás */}
-                <div className="h-32 md:h-44 w-full flex items-center justify-center mb-3 relative">
-                  {/* Círculo de sombra detrás */}
-                  <div className="absolute w-24 h-24 md:w-32 md:h-32 bg-black/20 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500"></div>
+                 <div className="h-32 md:h-44 w-full flex items-center justify-center mb-3 relative">
+                    <div className="absolute w-24 h-24 md:w-32 md:h-32 bg-black/20 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500"></div>
+                    
+                    {product.imagen ? (
+                       <img 
+                          src={product.imagen} 
+                          alt={product.nombre} 
+                          className="h-full w-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-500 drop-shadow-xl"
+                       />
+                    ) : (
+                       <div className="text-white/50 relative z-10"><ImageOff size={40} /></div>
+                    )}
+                 </div>
 
-                  {product.imagen ? (
-                    <img
-                      src={product.imagen}
-                      alt={product.nombre}
-                      className="h-full w-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-500 drop-shadow-xl"
-                    />
-                  ) : (
-                    <div className="text-white/50 relative z-10"><ImageOff size={40} /></div>
-                  )}
-                </div>
+                 <div className="flex-1 flex flex-col items-center text-center">
+                    <h3 className="text-xs md:text-sm font-black leading-tight mb-2 line-clamp-2 h-8 md:h-10 drop-shadow-md">
+                       {product.nombre}
+                    </h3>
 
-                {/* Info */}
-                <div className="flex-1 flex flex-col items-center text-center">
-                  <h3 className="text-xs md:text-sm font-black leading-tight mb-2 line-clamp-2 h-8 md:h-10 drop-shadow-md">
-                    {product.nombre}
-                  </h3>
-
-                  <div className="mt-auto w-full">
-                    <div className="flex flex-col items-center mb-3">
-                      {product.precio_original && (
-                        <p className="text-[10px] opacity-70 line-through">${product.precio_original.toLocaleString()}</p>
-                      )}
-                      <p className="text-lg md:text-xl font-black text-yellow-300 drop-shadow-sm">
-                        ${product.precio.toLocaleString()}
-                      </p>
+                    <div className="mt-auto w-full">
+                       <div className="flex flex-col items-center mb-3">
+                          {product.precio_original && (
+                             <p className="text-[10px] opacity-70 line-through">${product.precio_original.toLocaleString()}</p>
+                          )}
+                          <p className="text-lg md:text-xl font-black text-yellow-300 drop-shadow-sm">
+                             ${product.precio.toLocaleString()}
+                          </p>
+                       </div>
+                       
+                       <button 
+                          onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                          className="w-full bg-[#fdf0d5] text-[#009045] text-xs md:text-sm font-black py-2.5 rounded-full shadow-lg hover:bg-white hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                       >
+                          <ShoppingCart size={16} /> AGREGAR
+                       </button>
                     </div>
 
                     {/* Botón Estilo Vintage (Claro) */}
@@ -412,86 +401,6 @@ export default function Productos() {
           </div>
         )}
       </main>
-
-      {/* --- FOOTER --- */}
-      <footer className="bg-[#009045] text-white mt-auto flex flex-col font-sans border-t-[8px] border-yellow-400">
-        <div className="container mx-auto px-4 md:px-8 py-12 pb-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Contáctanos</h3>
-              <p className="mb-2 text-green-50">Desde celular a nivel nacional</p>
-              <p className="font-bold text-yellow-300 text-lg mb-4">601 486 5000</p>
-              <p className="text-sm mb-4 text-green-50">Opción 1: Ventas<br />Opción 3: Posventa</p>
-              <p className="mb-2 text-green-50">Línea Whatsapp</p>
-              <p className="font-bold text-yellow-300 text-lg">311 2281010</p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Nosotros</h3>
-              <ul className="space-y-2">
-                {/* Enlaces funcionales */}
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Quiénes somos</Link></li>
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Nuestra Historia</Link></li>
-                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Negocios Institucionales</Link></li>
-                <li><Link href="/nosotros" className="hover:text-yellow-300 transition-colors">Sostenibilidad</Link></li>
-                <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Trabaja con nosotros</Link></li>
-              </ul>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Legales</h3>
-                <ul className="space-y-2 text-sm text-green-50">
-                  {/* Estos pueden quedar con # si no existen las páginas aún */}
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Aviso de privacidad</a></li>
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Políticas</a></li>
-                  <li><a href="#" className="hover:text-yellow-300 transition-colors">Términos</a></li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Servicios</h3>
-                <ul className="space-y-2 text-sm text-green-50">
-                  <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Domicilios</Link></li>
-                  <li><Link href="/contacto" className="hover:text-yellow-300 transition-colors">Retiro en tienda</Link></li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold mb-4 pb-2 border-b border-[#007a3a]">Club Delicias</h3>
-              <ul className="space-y-2 mb-6">
-                <li><Link href="/registro" className="hover:text-yellow-300 transition-colors">Inscríbete</Link></li>
-                <li><Link href="/productos" className="hover:text-yellow-300 transition-colors">Beneficios</Link></li>
-              </ul>
-              <div className="flex space-x-3 mt-4">
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Facebook size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Instagram size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Linkedin size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><Youtube size={18} /></a>
-                <a href="#" className="bg-white text-[#009045] p-2 rounded-full hover:bg-yellow-300 hover:text-white transition"><MessageCircle size={18} /></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative bg-[#007a3a] pt-16 pb-6 mt-auto shadow-inner">
-          <div className="absolute left-1/2 transform -translate-x-1/2 -top-12 z-20">
-            <div className="bg-white p-1 rounded-full border-[6px] border-[#007a3a] shadow-xl hover:scale-105 transition-transform w-28 h-28 flex items-center justify-center overflow-hidden">
-              <img src="/icons/DC.png" alt="Logo Footer" className="w-full h-full object-cover" />
-            </div>
-          </div>
-          <div className="container mx-auto px-4 text-center flex flex-col gap-2 relative z-10">
-            <p className="text-sm font-medium">© 2025 Delicias Colombianas. Todos los derechos reservados.</p>
-            <p className="text-xs opacity-70 flex items-center justify-center gap-1 text-yellow-300">
-              <Quote size={10} /> Calidad y Tradición <Quote size={10} />
-            </p>
-            <p className="text-xs text-green-100/60 mt-2">
-              Plantilla de <a href="https://aurea-web.com" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-yellow-300 transition-colors">Áurea Web</a>
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
