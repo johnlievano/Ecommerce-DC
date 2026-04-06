@@ -378,16 +378,7 @@ export default function Productos() {
                           <ShoppingCart size={16} /> AGREGAR
                        </button>
                     </div>
-
-                    {/* Botón Estilo Vintage (Claro) */}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
-                      className="w-full bg-[#fdf0d5] text-[#009045] text-xs md:text-sm font-black py-2.5 rounded-full shadow-lg hover:bg-white hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                    >
-                      <ShoppingCart size={16} /> AGREGAR
-                    </button>
-                  </div>
-                </div>
+                 </div>
               </div>
             ))}
           </div>
